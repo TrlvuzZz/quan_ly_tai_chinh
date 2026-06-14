@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản Lý Tài Chính Cá Nhân</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <svg viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="8" fill="#3b82f6" opacity="0.15"/>
+      <path d="M6 18l5-5 4 4 7-8" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="20" cy="8" r="2" fill="#3b82f6"/>
+    </svg>
+    FinanceTrack
+  </div>
+  <div class="topbar-date" id="topbarDate"></div>
+  <div class="topbar-balance">
+    <div class="balance-item">
+      <div class="balance-label">Tổng Thu</div>
+      <div class="balance-value" id="hdrThu" style="color:var(--accent-green)">—</div>
+    </div>
+    <div class="balance-item">
+      <div class="balance-label">Tổng Chi</div>
+      <div class="balance-value" id="hdrChi" style="color:var(--accent-red)">—</div>
+    </div>
+    <div class="balance-item">
+      <div class="balance-label">Số Dư</div>
+      <div class="balance-value" id="hdrNet">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ══ LEFT: DANH SÁCH ══ -->
+  <div class="panel">
+    <div class="panel-title">Danh Sách Giao Dịch</div>
+
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Tìm kiếm..." oninput="renderList()">
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-btn active" id="fAll" onclick="setFilter('all')">Tất Cả</button>
+      <button class="filter-btn thu"    id="fThu" onclick="setFilter('Thu')">💰 Thu</button>
+      <button class="filter-btn chi"    id="fChi" onclick="setFilter('Chi')">💸 Chi</button>
+    </div>
+
+    <select class="filter-select" id="filterCat"   onchange="renderList()">
+      <option value="">-- Tất cả danh mục --</option>
+    </select>
+    <select class="filter-select" id="filterMonth" onchange="renderList()">
+      <option value="">-- Tất cả tháng --</option>
+    </select>
+
+    <div class="tx-list" id="txList">
+      <div class="empty-state">⏳ Đang tải...</div>
+    </div>
+  </div>
+
+  <!-- ══ CENTER: FORM + STATS ══ -->
+  <div class="center-panel">
+
+    <!-- Stats -->
+    <div>
+      <div class="section-label">Thống Kê Tổng Quan</div>
+      <div class="stats-grid">
+        <div class="stat-card thu">
+          <div class="stat-label">Tổng Thu</div>
+          <div class="stat-value thu" id="statThu">0 ₫</div>
+          <div class="stat-count"     id="statThuCount">0 giao dịch</div>
+        </div>
+        <div class="stat-card chi">
+          <div class="stat-label">Tổng Chi</div>
+          <div class="stat-value chi" id="statChi">0 ₫</div>
+          <div class="stat-count"     id="statChiCount">0 giao dịch</div>
+        </div>
+        <div class="stat-card net">
+          <div class="stat-label">Số Dư</div>
+          <div class="stat-value net positive" id="statNet">0 ₫</div>
+          <div class="stat-count" id="statTotal">0 giao dịch</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="form-card">
+      <div class="form-header">
+        <div class="form-title">📝 Nhập Giao Dịch</div>
+        <div class="form-mode-badge" id="formBadge">Thêm Mới</div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Ngày giao dịch *</label>
+          <input type="date" class="form-input" id="fDate" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Loại giao dịch *</label>
+          <div class="type-toggle">
+            <button class="type-btn thu active" id="typeThu" onclick="setType('Thu')">💰 Thu</button>
+            <button class="type-btn chi"        id="typeChi" onclick="setType('Chi')">💸 Chi</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Danh mục *</label>
+          <input type="text" class="form-input" id="fCat"
+                 placeholder="VD: Ăn uống, Lương..." list="catSuggestions">
+          <datalist id="catSuggestions">
+            <option value="Lương"><option value="Thưởng"><option value="Đầu tư">
+            <option value="Thu nhập phụ"><option value="Ăn uống"><option value="Di chuyển">
+            <option value="Mua sắm"><option value="Điện nước"><option value="Y tế">
+            <option value="Giáo dục"><option value="Giải trí"><option value="Nhà ở">
+            <option value="Tiết kiệm">
+          </datalist>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Số tiền (VNĐ) *</label>
+          <input type="text" class="form-input" id="fAmount"
+                 placeholder="VD: 1,000,000" oninput="formatAmountInput(this)">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Ghi chú</label>
+          <input type="text" class="form-input" id="fNote" placeholder="Ghi chú thêm...">
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-primary"                        id="btnSave"   onclick="saveTransaction()">✅ Lưu Giao Dịch</button>
+        <button class="btn btn-warning" style="display:none"  id="btnEdit"   onclick="updateTransaction()">✏️ Cập Nhật</button>
+        <button class="btn btn-danger"  style="display:none"  id="btnDelete" onclick="deleteTransaction()">🗑️ Xóa</button>
+        <button class="btn btn-ghost"                                         onclick="clearForm()">↩ Hủy</button>
+      </div>
+    </div>
+
+    <!-- Category breakdown -->
+    <div class="chart-wrap">
+      <div class="chart-title">📊 Phân Bổ Chi Tiêu Theo Danh Mục</div>
+      <div class="cat-list" id="catBreakdown">
+        <div style="color:var(--text-muted);font-size:11px;text-align:center;padding:10px;">Chưa có dữ liệu chi tiêu</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ RIGHT: TỶ GIÁ + VÀNG + XUẤT ══ -->
+  <div class="right-panel">
+
+    <!-- Tỷ giá -->
+    <div class="info-card">
+      <div class="info-card-title">
+        <div class="live-dot"></div>
+        Tỷ Giá Ngoại Tệ
+      </div>
+      <div class="rate-row"><div class="rate-name"><span>🇺🇸</span> USD</div><div><div class="rate-val">25,450 ₫</div><div class="rate-change up">▲ +0.12%</div></div></div>
+      <div class="rate-row"><div class="rate-name"><span>🇪🇺</span> EUR</div><div><div class="rate-val">27,650 ₫</div><div class="rate-change down">▼ -0.05%</div></div></div>
+      <div class="rate-row"><div class="rate-name"><span>🇯🇵</span> JPY</div><div><div class="rate-val">168 ₫</div><div class="rate-change up">▲ +0.08%</div></div></div>
+      <div class="rate-row"><div class="rate-name"><span>🇨🇳</span> CNY</div><div><div class="rate-val">3,520 ₫</div><div class="rate-change down">▼ -0.03%</div></div></div>
+      <div class="rate-row"><div class="rate-name"><span>🇬🇧</span> GBP</div><div><div class="rate-val">32,100 ₫</div><div class="rate-change up">▲ +0.15%</div></div></div>
+      <div class="rate-row"><div class="rate-name"><span>🇰🇷</span> KRW</div><div><div class="rate-val">18.5 ₫</div><div class="rate-change down">▼ -0.02%</div></div></div>
+      <div class="rate-row"><div class="rate-name"><span>🇸🇬</span> SGD</div><div><div class="rate-val">18,890 ₫</div><div class="rate-change up">▲ +0.07%</div></div></div>
+      <div class="update-time" id="rateTime"></div>
+    </div>
+
+    <!-- Giá vàng -->
+    <div class="info-card">
+      <div class="info-card-title">
+        <div class="live-dot" style="background:var(--accent-gold)"></div>
+        Giá Vàng
+      </div>
+      <div class="gold-row"><div><div class="gold-label">Vàng SJC (Mua)</div><div class="gold-sub">1 lượng</div></div><div class="gold-price">88,500,000 ₫</div></div>
+      <div class="gold-row"><div><div class="gold-label">Vàng SJC (Bán)</div><div class="gold-sub">1 lượng</div></div><div class="gold-price">90,200,000 ₫</div></div>
+      <div class="gold-row"><div><div class="gold-label">Vàng 9999 (Mua)</div><div class="gold-sub">1 chỉ</div></div><div class="gold-price">8,650,000 ₫</div></div>
+      <div class="gold-row"><div><div class="gold-label">Vàng 9999 (Bán)</div><div class="gold-sub">1 chỉ</div></div><div class="gold-price">8,780,000 ₫</div></div>
+      <div class="update-time" id="goldTime"></div>
+    </div>
+
+    <!-- Xuất báo cáo -->
+    <div class="info-card">
+      <div class="info-card-title">📤 Xuất Báo Cáo Excel</div>
+      <div class="export-stats">
+        <div class="export-stat">
+          <div class="export-stat-num" id="expTotal">0</div>
+          <div class="export-stat-lbl">Giao dịch</div>
+        </div>
+        <div class="export-stat">
+          <div class="export-stat-num" id="expMonths">0</div>
+          <div class="export-stat-lbl">Tháng</div>
+        </div>
+      </div>
+      <div class="export-info">
+        Xuất toàn bộ dữ liệu ra file <strong>.xlsx</strong> — mở trực tiếp bằng Excel.
+        Gồm 2 sheet: Danh sách giao dịch &amp; Báo cáo theo tháng.
+      </div>
+      <button class="btn-export green" onclick="exportExcel()">
+        <span>📊</span> Xuất File Excel (.xlsx)
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="{{ url_for('static', filename='js/api.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+</body>
+</html>
