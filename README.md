@@ -53,3 +53,15 @@ Nếu màn hình Terminal xuất hiện thông báo tương tự:
 thì chương trình đã khởi động thành công. Người dùng chỉ cần mở trình duyệt web và truy cập địa chỉ:
 `http://127.0.0.1:5000`
 để sử dụng hệ thống quản lý tài chính cá nhân.
+
+---
+### Kết quả đạt được
++ Xây dựng thành công ứng dụng web quản lý tài chính cá nhân.
++ Thực hiện đầy đủ chức năng thêm, sửa, xóa và tìm kiếm giao dịch.
++ Thống kê tổng thu, tổng chi và số dư theo dữ liệu thực tế.
++ Lưu trữ dữ liệu bền vững bằng cơ sở dữ liệu SQLite.
++ Tích hợp API cập nhật tỷ giá ngoại tệ.
++ Tích hợp API cập nhật giá vàng.
++ Hỗ trợ xuất báo cáo tài chính dưới định dạng Excel.
++ Tổ chức mã nguồn theo kiến trúc phân tách giao diện, xử lý và dữ liệu.
++ Hoàn thành các mục tiêu và yêu cầu của đề tài.
