@@ -25,18 +25,31 @@ static/
 
 ---
 ### Bước 3: Mở và cấu hình dự án trong PyCharm
+
 Khởi động phần mềm PyCharm, chọn Open và duyệt đến thư mục chứa mã nguồn dự án. Sau khi mở thành công, PyCharm sẽ hiển thị toàn bộ cấu trúc thư mục của chương trình ở cửa sổ Project.
+
 Tiếp theo, mở cửa sổ Terminal trong PyCharm bằng cách chọn:
+
 View → Tool Windows → Terminal
+
 hoặc nhấn:
+
 Alt + F12
+
 Tại cửa sổ Terminal, tiến hành cài đặt các thư viện cần thiết bằng lệnh:
+
 `pip install -r requirements.txt`
+
 PyCharm sẽ tự động tải và cài đặt các thư viện được liệt kê trong tệp requirements.txt.
+
 Sau khi cài đặt hoàn tất, kiểm tra không xuất hiện thông báo lỗi. Tiếp tục khởi động chương trình bằng lệnh:
+
 `python app.py`
+
 Nếu màn hình Terminal xuất hiện thông báo tương tự:
+
 `* Running on http://127.0.0.1:5000`
+
 thì chương trình đã khởi động thành công. Người dùng chỉ cần mở trình duyệt web và truy cập địa chỉ:
 `http://127.0.0.1:5000`
 để sử dụng hệ thống quản lý tài chính cá nhân.
